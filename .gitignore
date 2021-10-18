@@ -1,0 +1,4 @@
+node_modules/
+/client/node_modules/
+client/public/fontawesome-free-5.15.4-web/
+config/default.json
