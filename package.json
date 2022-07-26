@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "startit:server": "nodemon server",
-    "startit:client": "npm start --prefix client",
+    "start:server": "nodemon server",
+    "start:client": "npm start --prefix client",
     "dev": "concurrently npm:start:*",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
