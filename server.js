@@ -1,6 +1,8 @@
 const express = require('express');
-const connectDB = require('./config/db.js');
+const connectDB = require('./server/db/conn');
 const path = require('path');
+const cors = require('cors');
+const { PORT } = require('./config');
 
 const app = express();
 
@@ -9,6 +11,7 @@ connectDB();
 
 // Init Middleware
 app.use(express.json({ extended: false }));
+app.use(cors());
 
 
 // Define routes
@@ -23,11 +26,11 @@ if (process.env.NODE_ENV === 'production') {
    app.use(express.static('client/build'));
 
    // send HTML file to load
-   app.get('*', ( req, res ) => {
+   app.get('*', (req, res) => {
       res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
    });
 }
 
-const PORT = process.env.PORT || 5000;
+const port = PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(port, () => console.log(`Server started on port ${port}`));

@@ -2,18 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const request = require('request');
-const config = require('config');
 
 const auth = require('../../middleware/auth');
 const Post = require('../../models/Post');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = require('../../config');
+
 
 // @route   api/profile/me
 // @desc    Get current users profile
 // @access  private
-router.get('/me', auth, async ( req, res ) => {
+router.get('/me', auth, async (req, res) => {
    try {
       const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar']);
 
@@ -35,7 +36,7 @@ router.post('/', [auth, [
    check('status', 'status is required').not().isEmpty(),
    check('skills', 'skills is required').not().isEmpty()
 ]
-], async ( req, res ) => {
+], async (req, res) => {
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -85,9 +86,9 @@ router.post('/', [auth, [
       if (profile) {
          // Update profile
          profile = await Profile.findOneAndUpdate(
-            { user: req.user.id },
-            { $set: profileFields },
-            { new: true });
+             { user: req.user.id },
+             { $set: profileFields },
+             { new: true });
 
          return res.json(profile);
       }
@@ -109,7 +110,7 @@ router.post('/', [auth, [
 // @desc    Get all profiles
 // @access  public
 
-router.get('/', async ( req, res ) => {
+router.get('/', async (req, res) => {
    try {
       const profiles = await Profile.find().populate('user', ['name', 'avatar']);
       res.json(profiles);
@@ -124,7 +125,7 @@ router.get('/', async ( req, res ) => {
 // @desc    Get profile by user id
 // @access  public
 
-router.get('/user/:user_id', async ( req, res ) => {
+router.get('/user/:user_id', async (req, res) => {
    try {
       const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
 
@@ -146,7 +147,7 @@ router.get('/user/:user_id', async ( req, res ) => {
 // @desc    Delete profile, user and post
 // @access  Private
 
-router.delete('/', auth, async ( req, res ) => {
+router.delete('/', auth, async (req, res) => {
    try {
       // Remove users posts
       await Post.deleteMany({ user: req.user.id });
@@ -170,7 +171,7 @@ router.put('/experience', [auth, [
    check('company', 'Company is required').not().isEmpty(),
    check('from', 'From date is required').not().isEmpty()
 ]
-], async ( req, res ) => {
+], async (req, res) => {
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -198,7 +199,7 @@ router.put('/experience', [auth, [
 // @desc    Delete profile experience
 // @access  Private
 
-router.delete('/experience/:exp_id', auth, async ( req, res ) => {
+router.delete('/experience/:exp_id', auth, async (req, res) => {
 
    try {
 
@@ -231,7 +232,7 @@ router.put('/education', [auth, [
    check('fieldofstudy', 'Field of Study is required').not().isEmpty(),
    check('from', 'From date is required').not().isEmpty()
 ]
-], async ( req, res ) => {
+], async (req, res) => {
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -260,7 +261,7 @@ router.put('/education', [auth, [
 // @desc    Delete profile education
 // @access  Private
 
-router.delete('/education/:exp_id', auth, async ( req, res ) => {
+router.delete('/education/:exp_id', auth, async (req, res) => {
 
    try {
 
@@ -287,17 +288,17 @@ router.delete('/education/:exp_id', auth, async ( req, res ) => {
 // @desc    Get user repos from Github
 // @access  Private
 
-router.get('/github/:username', ( req, res ) => {
+router.get('/github/:username', (req, res) => {
    try {
       const options = {
          uri: `https://api.github.com/users/${
-            req.params.username}/repos?per_page=5&sort=created:asc&client_id=${config.get(
-            'githubClientId')}&client_secret=${config.get('githubSecret')}`,
+             req.params.username}/repos?per_page=5&sort=created:asc&client_id=${GITHUB_CLIENT_ID}
+            &client_secret=${GITHUB_CLIENT_SECRET}`,
          method: 'GET',
          headers: { 'user-agent': 'node.js' },
       };
 
-      request(options, ( errors, response, body ) => {
+      request(options, (errors, response, body) => {
          if (errors) console.error(errors);
 
          if (response.statusCode !== 200) {
