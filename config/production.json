@@ -1,6 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://hila:BYTPAL@manpro.atefe.mongodb.net/ManProDB?retryWrites=true&w=majority",
-  "jwtSecret": "tokensecret",
-  "githubClientId": "5c969bb6c71e3c481f3c",
-  "githubSecret": "c6e0116f05e90f712daaa3d5b101a7a58edf5593"
-}
